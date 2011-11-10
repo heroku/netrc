@@ -37,8 +37,8 @@ class Netrc
   # - machine name
   # - login keyword (including surrounding whitespace+comments)
   # - login
-  # - username keyword (including surrounding whitespace+comments)
-  # - username
+  # - password keyword (including surrounding whitespace+comments)
+  # - password
   # - trailing chars
   # This lets us change individual fields, then write out the file
   # with all its original formatting.
