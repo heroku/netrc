@@ -81,20 +81,29 @@ class Netrc
     @pre, @data = data
   end
 
+  attr_accessor :new_item_prefix
+
   def [](k)
     for v in @data
       if v[1] == k
-        return v[3], [5]
+        return v[3], v[5]
       end
     end
+    nil
   end
 
   def []=(k, info)
     for v in @data
       if v[1] == k
         v[3], v[5] = info
+        return
       end
     end
+    @data << new_item(k, info[0], info[1])
+  end
+
+  def new_item(m, l, p)
+    [new_item_prefix+"machine ", m, "\n  login ", l, "\n  password ", p, "\n"]
   end
 
   def save
