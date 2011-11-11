@@ -15,11 +15,11 @@ Read the user's default netrc file (`$HOME/.netrc` on Unix;
 
 Look up a username and password:
 
-    user, pass = n["api.heroku.com"]
+    user, pass = n["example.com"]
 
 Write a username and password:
 
-    n["api.heroku.com"] = user, newpass
+    n["example.com"] = user, newpass
     n.save
 
 If you make an entry that wasn't there before, it will be appended
@@ -28,7 +28,7 @@ explaining that the entry was added automatically. You can do it
 like this:
 
     n.new_item_prefix = "# This entry was added automatically\n"
-    n["api.heroku.com"] = user, newpass
+    n["example.com"] = user, newpass
     n.save
 
 Have fun!
