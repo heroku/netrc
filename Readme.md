@@ -32,3 +32,7 @@ like this:
     n.save
 
 Have fun!
+
+## Running Tests
+
+    $ turn test
