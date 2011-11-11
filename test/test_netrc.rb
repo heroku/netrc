@@ -4,6 +4,11 @@ require 'minitest/autorun'
 require 'netrc'
 
 class TestNetrc < MiniTest::Unit::TestCase
+  def setup
+    File.chmod(0600, "data/sample.netrc")
+    File.chmod(0644, "data/permissive.netrc")
+  end
+
   def test_parse_empty
     pre, items = Netrc.parse(Netrc.lex([]))
     assert_equal("", pre)
@@ -21,6 +26,12 @@ class TestNetrc < MiniTest::Unit::TestCase
             "p",
             "\n"]]
     assert_equal(exp, items)
+  end
+
+  def test_permission_error
+    Netrc.read("data/permissive.netrc")
+    assert false, "Should raise an error if permissions are wrong."
+  rescue Netrc::Error
   end
 
   def test_round_trip
