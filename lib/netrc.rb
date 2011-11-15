@@ -1,4 +1,6 @@
 class Netrc
+  VERSION = "0.1"
+
   Windows = false
   def self.default_path
     File.join(ENV["HOME"], default_name)
