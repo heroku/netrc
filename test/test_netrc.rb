@@ -28,6 +28,11 @@ class TestNetrc < MiniTest::Unit::TestCase
     assert_equal(exp, items)
   end
 
+  def test_missing_file
+    n = Netrc.read("data/nonexistent.netrc")
+    assert_equal(0, n.count)
+  end
+
   def test_permission_error
     Netrc.read("data/permissive.netrc")
     assert false, "Should raise an error if permissions are wrong."

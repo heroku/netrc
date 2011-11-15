@@ -11,12 +11,16 @@ class Netrc
     ".netrc"
   end
 
+  # Reads path and parses it as a .netrc file. If path doesn't
+  # exist, returns an empty object.
   def self.read(path=default_path)
     perm = File.stat(path).mode & 0777
     if perm != 0600
       raise Error, "Permission bits should be 0600, but are "+perm.to_s(8)
     end
     new(path, parse(lex(IO.readlines(path))))
+  rescue Errno::ENOENT
+    new(path, parse(lex([])))
   end
 
   def self.lex(lines)
@@ -104,6 +108,10 @@ class Netrc
       end
     end
     @data << new_item(k, info[0], info[1])
+  end
+
+  def count
+    @data.count
   end
 
   def new_item(m, l, p)

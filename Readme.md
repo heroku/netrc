@@ -8,6 +8,8 @@ Read a netrc file:
 
     n = Netrc.read("sample.netrc")
 
+If the file doesn't exist, Netrc.read will return an empty object.
+
 Read the user's default netrc file (`$HOME/.netrc` on Unix;
 `%HOME%\_netrc` on Windows):
 
