@@ -1,5 +1,5 @@
 class Netrc
-  VERSION = "0.1"
+  VERSION = "0.2"
   Windows = (RUBY_PLATFORM =~ /win32|mingw32/i)
 
   def self.default_path
