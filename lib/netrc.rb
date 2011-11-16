@@ -87,6 +87,7 @@ class Netrc
   end
 
   def initialize(path, data)
+    @new_item_prefix = ''
     @path = path
     @pre, @data = data
   end
