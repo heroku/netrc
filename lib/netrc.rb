@@ -121,7 +121,7 @@ class Netrc
   end
 
   def save
-    File.write(path, unparse)
+    File.open(@path, 'w') {|file| file.print(unparse)}
   end
 
   def unparse

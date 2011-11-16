@@ -87,4 +87,10 @@ class TestNetrc < MiniTest::Unit::TestCase
     n = Netrc.read("data/sample.netrc")
     assert_equal(nil, n["x"])
   end
+
+  def test_save
+    n = Netrc.read("data/sample.netrc")
+    n.save
+    assert_equal(File.read("data/sample.netrc"), n.unparse)
+  end
 end
