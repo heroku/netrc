@@ -1,7 +1,7 @@
 $VERBOSE = true
 require 'minitest/autorun'
 
-require 'netrc'
+require '../netrc/lib/netrc'
 
 class TestParse < MiniTest::Unit::TestCase
   def test_parse_empty
