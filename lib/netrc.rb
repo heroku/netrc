@@ -1,7 +1,7 @@
 class Netrc
   VERSION = "0.1"
+  Windows = (RUBY_PLATFORM =~ /win32|mingw32/i)
 
-  Windows = false
   def self.default_path
     File.join(ENV["HOME"], default_name)
   end
