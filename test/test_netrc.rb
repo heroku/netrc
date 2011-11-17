@@ -93,4 +93,11 @@ class TestNetrc < MiniTest::Unit::TestCase
     n.save
     assert_equal(File.read("data/sample.netrc"), n.unparse)
   end
+
+  def test_save_create
+    FileUtils.rm_f("/tmp/created.netrc")
+    n = Netrc.read("/tmp/created.netrc")
+    n.save
+    assert_equal(0600, File.stat("/tmp/created.netrc").mode & 0777)
+  end
 end
