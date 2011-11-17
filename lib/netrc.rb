@@ -18,7 +18,7 @@ class Netrc
   def self.read(path=default_path)
     perm = File.stat(path).mode & 0777
     if perm != 0600
-      raise Error, "Permission bits should be 0600, but are "+perm.to_s(8)
+      raise Error, "Permission bits for '#{path}' should be 0600, but are "+perm.to_s(8)
     end
     new(path, parse(lex(IO.readlines(path))))
   rescue Errno::ENOENT
