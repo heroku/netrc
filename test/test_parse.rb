@@ -1,9 +1,9 @@
 $VERBOSE = true
-require 'minitest/autorun'
+require 'test/unit'
 
 require '../netrc/lib/netrc'
 
-class TestParse < MiniTest::Unit::TestCase
+class TestParse < Test::Unit::TestCase
   def test_parse_empty
     pre, items = Netrc.parse([])
     assert_equal("", pre)

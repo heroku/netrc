@@ -1,9 +1,10 @@
 $VERBOSE = true
-require 'minitest/autorun'
+require 'test/unit'
+require 'fileutils'
 
 require '../netrc/lib/netrc'
 
-class TestNetrc < MiniTest::Unit::TestCase
+class TestNetrc < Test::Unit::TestCase
   def setup
     File.chmod(0600, "data/sample.netrc")
     File.chmod(0644, "data/permissive.netrc")

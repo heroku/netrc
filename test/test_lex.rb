@@ -1,9 +1,9 @@
 $VERBOSE = true
-require 'minitest/autorun'
+require 'test/unit'
 
 require '../netrc/lib/netrc'
 
-class TestLex < MiniTest::Unit::TestCase
+class TestLex < Test::Unit::TestCase
   def test_lex_empty
     t = Netrc.lex([])
     assert_equal([], t)
