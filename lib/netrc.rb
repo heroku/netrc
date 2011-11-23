@@ -29,7 +29,7 @@ class Netrc
     tokens = []
     for line in lines
       content, comment = line.split(/(\s*#.*)/m)
-      tokens += content.split(/(?<=\s)(?=\S)|(?<=\S)(?=\s)/)
+      tokens += content.split(/\b/)
       if comment
         tokens << comment
       end
