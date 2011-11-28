@@ -31,4 +31,12 @@ class TestParse < Test::Unit::TestCase
     e = [["machine ", "m", " login ", "l", " password ", "p", "\n"]] * 2
     assert_equal(e, items)
   end
+
+  def test_parse_complex
+    t = ["header\n", "machine", " ", "sub", ".", "domain", ".", "com", "\n", "login", " ", "email", "@", "domain", ".", "com", "\n", "password", " ", "pass", "\n"]
+    pre, items = Netrc.parse(t)
+    assert_equal("header\n", pre)
+    e = [["machine ", "sub.domain.com", "login ", "email@domain.com", "password ", "pass", "\n"]]
+    assert_equal(e, items)
+  end
 end
