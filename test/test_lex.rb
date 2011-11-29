@@ -49,4 +49,10 @@ class TestLex < Test::Unit::TestCase
     e = ["machine", " ", "m", " ", "login", " ", "l", " ", "password", " ", "p", "\n"]
     assert_equal(e, t)
   end
+
+  def test_lex_complex
+    t = Netrc.lex(["machine sub.domain.com  login email@domain.com  password pass\n"])
+    e = ["machine", " ", "sub.domain.com", "  ", "login", " ", "email@domain.com", "  ", "password", " ", "pass", "\n"]
+    assert_equal(e, t)
+  end
 end

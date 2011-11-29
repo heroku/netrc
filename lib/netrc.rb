@@ -29,7 +29,22 @@ class Netrc
     tokens = []
     for line in lines
       content, comment = line.split(/(\s*#.*)/m)
-      tokens += content.split(/\b/)
+      content.each_char do |char|
+        case char
+        when /\s/
+          if tokens.last && tokens.last[-1..-1] =~ /\s/
+            tokens.last << char
+          else
+            tokens << char
+          end
+        else
+          if tokens.last && tokens.last[-1..-1] =~ /\S/
+            tokens.last << char
+          else
+            tokens << char
+          end
+        end
+      end
       if comment
         tokens << comment
       end
