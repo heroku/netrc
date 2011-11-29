@@ -5,9 +5,9 @@ Gem::Specification.new do |gem|
   gem.name    = "netrc"
   gem.version = Netrc::VERSION
 
-  gem.author      = "Keith Rarick"
-  gem.email       = "kr@xph.us"
-  gem.homepage    = "https://github.com/kr/netrc"
+  gem.authors     = ["Keith Rarick", "geemus (Wesley Beary)"]
+  gem.email       = "geemus@gmail.com"
+  gem.homepage    = "https://github.com/geemus/netrc"
   gem.summary     = "Library to read and write netrc files."
   gem.description = "This library can read and update netrc files, preserving formatting including comments and whitespace."
 
