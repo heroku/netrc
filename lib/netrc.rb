@@ -132,6 +132,14 @@ class Netrc
     @data.count
   end
 
+  def delete(key)
+    @data.delete(@data[key])
+  end
+
+  def each(&block)
+    @data.each(&block)
+  end
+
   def new_item(m, l, p)
     [new_item_prefix+"machine ", m, "\n  login ", l, "\n  password ", p, "\n"]
   end
