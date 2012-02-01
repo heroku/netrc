@@ -122,7 +122,7 @@ class Netrc
     for v in @data
       if v[1] == k
         v[3], v[5] = info
-        return
+        break
       end
     end
     @data << new_item(k, info[0], info[1])
@@ -133,7 +133,14 @@ class Netrc
   end
 
   def delete(key)
-    @data.delete(@data[key])
+    datum = nil
+    for value in @data
+      if value[1] == key
+        datum = value
+        break
+      end
+    end
+    @data.delete(datum)
   end
 
   def each(&block)
