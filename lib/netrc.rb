@@ -17,7 +17,7 @@ class Netrc
   # exist, returns an empty object.
   def self.read(path=default_path)
     perm = File.stat(path).mode & 0777
-    if perm != 0600
+    if perm != 0600 && !(RUBY_PLATFORM =~ /mswin32|mingw32/)
       raise Error, "Permission bits for '#{path}' should be 0600, but are "+perm.to_s(8)
     end
     new(path, parse(lex(IO.readlines(path))))
