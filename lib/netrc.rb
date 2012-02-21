@@ -3,14 +3,11 @@ class Netrc
   WINDOWS = (RUBY_PLATFORM =~ /win32|mingw32/i)
 
   def self.default_path
-    File.join(ENV["HOME"], default_name)
-  end
-
-  def self.default_name
     if WINDOWS
-      return "_netrc"
+      File.join(ENV['USERPROFILE'].gsub("\\","/"), "_netrc")
+    else
+      File.join(ENV["HOME"], ".netrc")
     end
-    ".netrc"
   end
 
   # Reads path and parses it as a .netrc file. If path doesn't
