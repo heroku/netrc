@@ -119,7 +119,7 @@ class Netrc
     for v in @data
       if v[1] == k
         v[3], v[5] = info
-        break
+        return
       end
     end
     @data << new_item(k, info[0], info[1])
