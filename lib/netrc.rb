@@ -17,7 +17,7 @@ class Netrc
     if perm != 0600 && !(WINDOWS)
       raise Error, "Permission bits for '#{path}' should be 0600, but are "+perm.to_s(8)
     end
-    new(path, parse(lex(IO.readlines(path))))
+    new(path, parse(lex(File.readlines(path))))
   rescue Errno::ENOENT
     new(path, parse(lex([])))
   end
