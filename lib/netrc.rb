@@ -107,22 +107,17 @@ class Netrc
   attr_accessor :new_item_prefix
 
   def [](k)
-    for v in @data
-      if v[1] == k
-        return v[3], v[5]
-      end
+    if item = @data.detect {|datum| datum[1] == k}
+      [item[3], item[5]]
     end
-    nil
   end
 
   def []=(k, info)
-    for v in @data
-      if v[1] == k
-        v[3], v[5] = info
-        return
-      end
+    if item = @data.detect {|datum| datum[1] == k}
+      item[3], item[5] = info
+    else
+      @data << new_item(k, info[0], info[1])
     end
-    @data << new_item(k, info[0], info[1])
   end
 
   def count
