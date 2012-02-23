@@ -37,4 +37,5 @@ Have fun!
 
 ## Running Tests
 
-    $ turn test
+    $ bundle install
+    $ bundle exec turn test
