@@ -1,7 +1,7 @@
 $VERBOSE = true
 require 'test/unit'
 
-require '../netrc/lib/netrc'
+require File.expand_path("#{File.dirname(__FILE__)}/../lib/netrc")
 
 class TestLex < Test::Unit::TestCase
   def test_lex_empty

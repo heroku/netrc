@@ -2,7 +2,7 @@ $VERBOSE = true
 require 'test/unit'
 require 'fileutils'
 
-require '../netrc/lib/netrc'
+require File.expand_path("#{File.dirname(__FILE__)}/../lib/netrc")
 
 class TestNetrc < Test::Unit::TestCase
   def setup
