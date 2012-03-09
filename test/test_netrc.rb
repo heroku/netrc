@@ -103,11 +103,14 @@ class TestNetrc < Test::Unit::TestCase
   end
 
   def test_dont_save_bad
-    netrc = Netrc.read("foo")
-    netrc["test.local"] = ["", "hello"]
+    FileUtils.rm_f("/tmp/foo")
+    netrc = Netrc.read("/tmp/foo")
+    assert_raise(Netrc::Error) do
+      netrc["test.local"] = ["", "hello"]
+    end
     netrc.save
     assert_nothing_raised do
-      Netrc.read("foo")
+      Netrc.read("/tmp/foo")
     end
   end
 end

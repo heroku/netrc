@@ -116,6 +116,8 @@ class Netrc
   end
 
   def []=(k, info)
+    raise Error, "Login cannot be blank" unless info[0].size > 0
+    raise Error, "Password cannot be blank" unless info[1].size > 0
     if item = @data.detect {|datum| datum[1] == k}
       item[3], item[5] = info
     else
@@ -143,11 +145,14 @@ class Netrc
   end
 
   def new_item(m, l, p)
+    raise Error, "Login cannot be blank" unless l.size > 0
+    raise Error, "Password cannot be blank" unless p.size > 0
     [new_item_prefix+"machine ", m, "\n  login ", l, "\n  password ", p, "\n"]
   end
 
   def save
-    FileUtility.atomic_write(@path) {|file| file.print(unparse)}
+    Netrc.parse(Netrc.lex((unparsed = unparse).split "\n"))
+    FileUtility.atomic_write(@path) {|file| file.print(unparsed) }
   end
 
   def unparse
