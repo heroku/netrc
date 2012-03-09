@@ -101,4 +101,13 @@ class TestNetrc < Test::Unit::TestCase
     n.save
     assert_equal(0600, File.stat("/tmp/created.netrc").mode & 0777)
   end
+
+  def test_dont_save_bad
+    netrc = Netrc.read("foo")
+    netrc["test.local"] = ["", "hello"]
+    netrc.save
+    assert_nothing_raised do
+      Netrc.read("foo")
+    end
+  end
 end
