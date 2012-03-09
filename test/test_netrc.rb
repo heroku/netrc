@@ -58,7 +58,6 @@ class TestNetrc < Test::Unit::TestCase
   def test_set_get
     n = Netrc.read("data/sample.netrc")
     n["m"] = "a", "b"
-    l, p = n["m"]
     assert_equal(["a", "b"], n["m"])
   end
 
