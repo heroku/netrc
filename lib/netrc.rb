@@ -1,4 +1,7 @@
+require File.join(File.dirname(__FILE__) , 'file_utility')
+
 class Netrc
+
   VERSION = "0.7"
   WINDOWS = (RUBY_PLATFORM =~ /win32|mingw32/i)
 
@@ -144,7 +147,7 @@ class Netrc
   end
 
   def save
-    File.open(@path, 'w', 0600) {|file| file.print(unparse)}
+    FileUtility.atomic_write(@path) {|file| file.print(unparse)}
   end
 
   def unparse
