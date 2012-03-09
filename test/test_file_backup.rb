@@ -30,6 +30,8 @@ class TestParse < Test::Unit::TestCase
     FileUtility.backup('b')
     assert( File.read('b') == '1234' )
     assert( File.read('b.000') == '1234' )
+    assert_equal(0600, File.stat("b").mode & 0777)
+    assert_equal(0600, File.stat("b.000").mode & 0777)
   end
 
   def test_backup_picks_next_available_filename
