@@ -109,14 +109,18 @@ module FileUtility
       backup_filename = backup_filename_pattern % [ filename, n += 1 ] 
     end while File.exist?(backup_filename)
 
-    copy_file filename, backup_filename, 0600 
+    copy_file filename, backup_filename, File.stat(filename).mode
   end
 
   # Rename files atomicly, backup by default.
   #
-  def self.safe_rename(source, dest, make_backup = true)
+  # Pass mode to ensure dest is set to a particular file mode, otherwise it is copied from source.
+  #
+  def self.safe_rename(source, dest, make_backup = true, mode = nil)
     backup(dest) if make_backup 
+    mode ||= File.stat(source).mode
     File.rename source, dest
+    File.chmod(mode, dest) if mode != File.stat(dest).mode
   end
 
   # Safely write to a file that may exist, backup existing by default.
@@ -126,11 +130,12 @@ module FileUtility
 
     if File.exist?(filename)
       File.open(filename, 'ab+') {  } # Make sure the file exists and is read-writable
+      src_mode = File.stat(filename).mode
       Tempfile.open(File.basename(filename), File.dirname(filename)) do |tempfile|
         begin
           yield(tempfile)
           tempfile.close
-          safe_rename tempfile.path, filename, make_backup
+          safe_rename tempfile.path, filename, make_backup, src_mode
         ensure
           tempfile.close rescue nil
           tempfile.unlink rescue nil
