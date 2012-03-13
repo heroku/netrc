@@ -1,0 +1,7 @@
+0.7.1 03/13/12
+==============
+
+* add Gemfile to simplify development
+* add MIT license
+* fix test require path
+* fix unused variable assignment (caused warnings) in tests

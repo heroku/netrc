@@ -11,7 +11,7 @@ Gem::Specification.new do |gem|
   gem.summary     = "Library to read and write netrc files."
   gem.description = "This library can read and update netrc files, preserving formatting including comments and whitespace."
 
-  gem.files = %x{ git ls-files }.split("\n").select { |d| d =~ %r{^(Readme.md|data/|lib/|test/)} }
+  gem.files = %x{ git ls-files }.split("\n").select { |d| d =~ %r{^(changelog.txt|LICENSE|Readme.md|data/|lib/|test/)} }
 
   gem.add_development_dependency "turn"
 end
