@@ -31,7 +31,7 @@ class TestNetrc < Test::Unit::TestCase
 
   def test_missing_file
     n = Netrc.read("data/nonexistent.netrc")
-    assert_equal(0, n.count)
+    assert_equal(0, n.length)
   end
 
   def test_permission_error

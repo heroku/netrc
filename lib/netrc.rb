@@ -68,7 +68,7 @@ class Netrc
     cur, item = [], []
 
     def ts.take
-      if count < 1
+      if length < 1
         raise Error, "unexpected EOF"
       end
       shift
@@ -76,14 +76,14 @@ class Netrc
 
     def ts.readto
       l = []
-      while count > 0 && ! yield(self[0])
+      while length > 0 && ! yield(self[0])
         l << shift
       end
       return l.join
     end
 
     pre = ts.readto{|t| t == "machine"}
-    while ts.count > 0
+    while ts.length > 0
       cur << ts.take + ts.readto{|t| ! skip?(t)}
       cur << ts.take
       cur << ts.readto{|t| t == "login"} + ts.take + ts.readto{|t| ! skip?(t)}
@@ -120,8 +120,8 @@ class Netrc
     end
   end
 
-  def count
-    @data.count
+  def length
+    @data.length
   end
 
   def delete(key)
