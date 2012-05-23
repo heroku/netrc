@@ -10,14 +10,28 @@ class Netrc
     end
   end
 
-  # Reads path and parses it as a .netrc file. If path doesn't
-  # exist, returns an empty object.
-  def self.read(path=default_path)
+  def self.encrypted(path)
+    path + ".gpg"
+  end
+
+  def self.check_permissions(path)
     perm = File.stat(path).mode & 0777
     if perm != 0600 && !(WINDOWS)
       raise Error, "Permission bits for '#{path}' should be 0600, but are "+perm.to_s(8)
     end
-    new(path, parse(lex(File.readlines(path))))
+  end
+
+  # Reads path and parses it as a .netrc file. If path doesn't
+  # exist, returns an empty object. If a .gpg file exists for path,
+  # decrypt that using gpg instead.
+  def self.read(path=default_path)
+    if File.exists?(encrypted(path)) && system("which gpg > /dev/null")
+      check_permissions(encrypted(path))
+      new(path, parse(lex(`gpg --batch -q -d #{encrypted(path)}`.split("\n"))))
+    else
+      check_permissions(path)
+      new(path, parse(lex(File.readlines(path))))
+    end
   rescue Errno::ENOENT
     new(path, parse(lex([])))
   end
