@@ -10,10 +10,6 @@ class Netrc
     end
   end
 
-  def self.encrypted(path)
-    path + ".gpg"
-  end
-
   def self.check_permissions(path)
     perm = File.stat(path).mode & 0777
     if perm != 0600 && !(WINDOWS)
@@ -25,9 +21,11 @@ class Netrc
   # exist, returns an empty object. If a .gpg file exists for path,
   # decrypt that using gpg instead.
   def self.read(path=default_path)
-    if File.exists?(encrypted(path)) && system("which gpg > /dev/null")
-      check_permissions(encrypted(path))
-      new(path, parse(lex(`gpg --batch -q -d #{encrypted(path)}`.split("\n"))))
+    if File.exists?(path + ".gpg") && system("which gpg > /dev/null")
+      read(path + ".gpg")
+    elsif path =~ /\.gpg$/
+      check_permissions(path)
+      new(path, parse(lex(`gpg --batch --quiet --decrypt #{path}`.split("\n"))))
     else
       check_permissions(path)
       new(path, parse(lex(File.readlines(path))))
