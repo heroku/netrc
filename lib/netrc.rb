@@ -156,7 +156,15 @@ class Netrc
   end
 
   def save
-    File.open(@path, 'w', 0600) {|file| file.print(unparse)}
+    if @path =~ /\.gpg$/
+      IO.popen("gpg -a --batch --default-recipient-self -e", "r+") do |gpg|
+        gpg.puts(unparse)
+        gpg.close_write
+        File.open(@path, 'w', 0600) {|file| file.print(gpg.read)}
+      end
+    else
+      File.open(@path, 'w', 0600) {|file| file.print(unparse)}
+    end
   end
 
   def unparse
