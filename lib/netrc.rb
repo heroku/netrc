@@ -21,11 +21,13 @@ class Netrc
   # exist, returns an empty object. If a .gpg file exists for path,
   # decrypt that using gpg instead.
   def self.read(path=default_path)
-    if File.exists?(path + ".gpg") && system("which gpg > /dev/null")
-      read(path + ".gpg")
-    elsif path =~ /\.gpg$/
+    if path =~ /\.gpg$/
       check_permissions(path)
-      new(path, parse(lex(`gpg --batch --quiet --decrypt #{path}`.split("\n"))))
+      decrypted = `gpg --batch --quiet --decrypt #{path}`
+      raise Error.new("Decrypting #{path} failed.") unless $?.success?
+      new(path, parse(lex(decrypted.split("\n"))))
+    elsif File.exists?(path + ".gpg") && system("which gpg > /dev/null")
+      read(path + ".gpg")
     else
       check_permissions(path)
       new(path, parse(lex(File.readlines(path))))
