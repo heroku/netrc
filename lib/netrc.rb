@@ -159,11 +159,13 @@ class Netrc
 
   def save
     if @path =~ /\.gpg$/
-      IO.popen("gpg -a --batch --default-recipient-self -e", "r+") do |gpg|
+      e = IO.popen("gpg -a --batch --default-recipient-self -e", "r+") do |gpg|
         gpg.puts(unparse)
         gpg.close_write
-        File.open(@path, 'w', 0600) {|file| file.print(gpg.read)}
+        gpg.read
       end
+      raise Error.new("Encrypting #{path} failed.") unless $?.success?
+      File.open(@path, 'w', 0600) {|file| file.print(e)}
     else
       File.open(@path, 'w', 0600) {|file| file.print(unparse)}
     end
