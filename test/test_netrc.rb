@@ -102,7 +102,7 @@ class TestNetrc < Test::Unit::TestCase
   end
 
   def test_encrypted_roundtrip
-    if system("which gpg > /dev/null") # and agent active?
+    if `gpg --list-keys 2> /dev/null` != ""
       FileUtils.rm_f("/tmp/test.netrc.gpg")
       n = Netrc.read("/tmp/test.netrc.gpg")
       n["m"] = "a", "b"
