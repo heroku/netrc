@@ -11,14 +11,24 @@ class Netrc
     end
   end
 
-  # Reads path and parses it as a .netrc file. If path doesn't
-  # exist, returns an empty object.
-  def self.read(path=default_path)
+  def self.check_permissions(path)
     perm = File.stat(path).mode & 0777
     if perm != 0600 && !(CYGWIN) && !(WINDOWS)
       raise Error, "Permission bits for '#{path}' should be 0600, but are "+perm.to_s(8)
     end
-    new(path, parse(lex(File.readlines(path))))
+  end
+
+  # Reads path and parses it as a .netrc file. If path doesn't
+  # exist, returns an empty object. Decrypt paths ending in .gpg.
+  def self.read(path=default_path)
+    check_permissions(path)
+    if path =~ /\.gpg$/
+      decrypted = `gpg --batch --quiet --decrypt #{path}`
+      raise Error.new("Decrypting #{path} failed.") unless $?.success?
+      new(path, parse(lex(decrypted.split("\n"))))
+    else
+      new(path, parse(lex(File.readlines(path))))
+    end
   rescue Errno::ENOENT
     new(path, parse(lex([])))
   end
@@ -145,7 +155,17 @@ class Netrc
   end
 
   def save
-    File.open(@path, 'w', 0600) {|file| file.print(unparse)}
+    if @path =~ /\.gpg$/
+      e = IO.popen("gpg -a --batch --default-recipient-self -e", "r+") do |gpg|
+        gpg.puts(unparse)
+        gpg.close_write
+        gpg.read
+      end
+      raise Error.new("Encrypting #{path} failed.") unless $?.success?
+      File.open(@path, 'w', 0600) {|file| file.print(e)}
+    else
+      File.open(@path, 'w', 0600) {|file| file.print(unparse)}
+    end
   end
 
   def unparse

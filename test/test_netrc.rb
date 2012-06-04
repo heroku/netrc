@@ -100,4 +100,15 @@ class TestNetrc < Test::Unit::TestCase
     n.save
     assert_equal(0600, File.stat("/tmp/created.netrc").mode & 0777)
   end
+
+  def test_encrypted_roundtrip
+    if `gpg --list-keys 2> /dev/null` != ""
+      FileUtils.rm_f("/tmp/test.netrc.gpg")
+      n = Netrc.read("/tmp/test.netrc.gpg")
+      n["m"] = "a", "b"
+      n.save
+      assert_equal(0600, File.stat("/tmp/test.netrc.gpg").mode & 0777)
+      assert_equal(["a", "b"], Netrc.read("/tmp/test.netrc.gpg")["m"])
+    end
+  end
 end
