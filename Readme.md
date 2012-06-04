@@ -9,11 +9,9 @@ Read a netrc file:
 
     n = Netrc.read("sample.netrc")
 
-If the file doesn't exist, Netrc.read will return an empty object.
-
-If the filename ends in ".gpg", it will be decrypted using
-[GPG](http://www.gnupg.org/). If an encrypted version of the given
-netrc file is found and GPG is installed, it will be used instead.
+If the file doesn't exist, Netrc.read will return an empty object. If
+the filename ends in ".gpg", it will be decrypted using
+[GPG](http://www.gnupg.org/).
 
 Read the user's default netrc file (`$HOME/.netrc` on Unix;
 `%HOME%\_netrc` on Windows):

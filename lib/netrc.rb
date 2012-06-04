@@ -18,16 +18,13 @@ class Netrc
   end
 
   # Reads path and parses it as a .netrc file. If path doesn't
-  # exist, returns an empty object. If a .gpg file exists for path,
-  # decrypt that using gpg instead.
+  # exist, returns an empty object. Decrypt paths ending in .gpg.
   def self.read(path=default_path)
     check_permissions(path)
     if path =~ /\.gpg$/
       decrypted = `gpg --batch --quiet --decrypt #{path}`
       raise Error.new("Decrypting #{path} failed.") unless $?.success?
       new(path, parse(lex(decrypted.split("\n"))))
-    elsif File.exists?(path + ".gpg") && system("which gpg > /dev/null")
-      read(path + ".gpg")
     else
       new(path, parse(lex(File.readlines(path))))
     end
