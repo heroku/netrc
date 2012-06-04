@@ -1,5 +1,5 @@
 class Netrc
-  VERSION = "0.7.3"
+  VERSION = "0.7.4"
   CYGWIN  = RUBY_PLATFORM =~ /cygwin/i
   WINDOWS = RUBY_PLATFORM =~ /win32|mingw32/i
 
