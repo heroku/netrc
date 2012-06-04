@@ -1,6 +1,7 @@
 class Netrc
   VERSION = "0.7.2"
-  WINDOWS = (RUBY_PLATFORM =~ /win32|mingw32/i)
+  CYGWIN  = RUBY_PLATFORM =~ /cygwin/i
+  WINDOWS = RUBY_PLATFORM =~ /win32|mingw32/i
 
   def self.default_path
     if WINDOWS
@@ -14,7 +15,7 @@ class Netrc
   # exist, returns an empty object.
   def self.read(path=default_path)
     perm = File.stat(path).mode & 0777
-    if perm != 0600 && !(WINDOWS)
+    if perm != 0600 && !(CYGWIN) && !(WINDOWS)
       raise Error, "Permission bits for '#{path}' should be 0600, but are "+perm.to_s(8)
     end
     new(path, parse(lex(File.readlines(path))))
