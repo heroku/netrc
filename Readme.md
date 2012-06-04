@@ -1,6 +1,7 @@
 # Netrc
 
-This library reads and writes `.netrc` files.
+This library reads and writes
+[`.netrc` files](http://www.gnu.org/software/inetutils/manual/html_node/The-_002enetrc-File.html).
 
 ## API
 
@@ -8,7 +9,9 @@ Read a netrc file:
 
     n = Netrc.read("sample.netrc")
 
-If the file doesn't exist, Netrc.read will return an empty object.
+If the file doesn't exist, Netrc.read will return an empty object. If
+the filename ends in ".gpg", it will be decrypted using
+[GPG](http://www.gnupg.org/).
 
 Read the user's default netrc file (`$HOME/.netrc` on Unix;
 `%HOME%\_netrc` on Windows):
