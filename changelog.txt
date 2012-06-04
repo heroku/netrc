@@ -1,3 +1,8 @@
+0.7.3 06/04/12
+==============
+
+* also skip permissions check on cygwin
+
 0.7.2 05/23/12
 =============
 
