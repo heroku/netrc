@@ -1,19 +1,21 @@
+require 'rbconfig'
+
 class Netrc
   VERSION = "0.7.4"
-  CYGWIN  = RUBY_PLATFORM =~ /cygwin/i
-  WINDOWS = RUBY_PLATFORM =~ /win32|mingw32/i
+  WINDOWS = RbConfig::CONFIG["host_os"] =~ /mswin|mingw|cygwin/
+  CYGWIN  = RbConfig::CONFIG["host_os"] =~ /cygwin/
 
   def self.default_path
-    if WINDOWS
+    if WINDOWS && !CYGWIN
       File.join(ENV['USERPROFILE'].gsub("\\","/"), "_netrc")
     else
-      File.join(ENV["HOME"], ".netrc")
+      File.join((ENV["HOME"] || "./"), ".netrc")
     end
   end
 
   def self.check_permissions(path)
     perm = File.stat(path).mode & 0777
-    if perm != 0600 && !(CYGWIN) && !(WINDOWS)
+    if perm != 0600 && !(WINDOWS)
       raise Error, "Permission bits for '#{path}' should be 0600, but are "+perm.to_s(8)
     end
   end
