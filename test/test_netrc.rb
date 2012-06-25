@@ -12,11 +12,6 @@ class TestNetrc < Test::Unit::TestCase
     File.chmod(0644, "data/permissive.netrc")
   end
 
-  # see http://stackoverflow.com/questions/4871309/what-is-the-correct-way-to-detect-if-ruby-is-running-on-windows
-  def is_windows?
-    RbConfig::CONFIG["host_os"] =~ /mswin|mingw|cygwin/
-  end
-
   def test_parse_empty
     pre, items = Netrc.parse(Netrc.lex([]))
     assert_equal("", pre)
@@ -42,16 +37,23 @@ class TestNetrc < Test::Unit::TestCase
   end
 
   def test_permission_error
+    original_windows = Netrc::WINDOWS
+    Netrc.const_set(:WINDOWS, false)
     Netrc.read("data/permissive.netrc")
-    assert false, "Should raise an error if permissions are wrong on a non-windows system." unless is_windows?
   rescue Netrc::Error
+    assert true, "Should raise an error if permissions are wrong on a non-windows system."
+  ensure
+    Netrc.const_set(:WINDOWS, original_windows)
   end
 
   def test_permission_error_windows
-    def Netrc.is_windows?; true end
+    original_windows = Netrc::WINDOWS
+    Netrc.const_set(:WINDOWS, true)
     Netrc.read("data/permissive.netrc")
   rescue Netrc::Error
-    assert false, "Should not raise an error if permissions are wrong on a non-windows system." unless is_windows?
+    assert false, "Should not raise an error if permissions are wrong on a non-windows system."
+  ensure
+    Netrc.const_set(:WINDOWS, original_windows)
   end
 
   def test_round_trip
@@ -112,7 +114,9 @@ class TestNetrc < Test::Unit::TestCase
     FileUtils.rm_f("/tmp/created.netrc")
     n = Netrc.read("/tmp/created.netrc")
     n.save
-    assert_equal(0600, File.stat("/tmp/created.netrc").mode & 0777) unless is_windows?
+    unless Netrc::WINDOWS
+      assert_equal(0600, File.stat("/tmp/created.netrc").mode & 0777)
+    end
   end
 
   def test_encrypted_roundtrip

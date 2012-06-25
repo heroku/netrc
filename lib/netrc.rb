@@ -2,6 +2,8 @@ require 'rbconfig'
 
 class Netrc
   VERSION = "0.7.4"
+
+  # see http://stackoverflow.com/questions/4871309/what-is-the-correct-way-to-detect-if-ruby-is-running-on-windows
   WINDOWS = RbConfig::CONFIG["host_os"] =~ /mswin|mingw|cygwin/
   CYGWIN  = RbConfig::CONFIG["host_os"] =~ /cygwin/
 
