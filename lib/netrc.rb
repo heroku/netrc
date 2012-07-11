@@ -31,7 +31,7 @@ class Netrc
       raise Error.new("Decrypting #{path} failed.") unless $?.success?
       new(path, parse(lex(decrypted.split("\n"))))
     else
-      new(path, parse(lex(File.readlines(path))))
+      new(path, parse(lex(File.read(path).split("\n"))))
     end
   rescue Errno::ENOENT
     new(path, parse(lex([])))
@@ -41,6 +41,7 @@ class Netrc
     tokens = []
     for line in lines
       content, comment = line.split(/(\s*#.*)/m)
+      next if content.nil?
       content.each_char do |char|
         case char
         when /\s/
@@ -60,6 +61,7 @@ class Netrc
       if comment
         tokens << comment
       end
+      tokens << ""
     end
     tokens
   end
