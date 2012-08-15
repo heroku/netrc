@@ -73,7 +73,7 @@ class Netrc
   end
 
   # Returns two values, a header and a list of items.
-  # Each item is a 7-tuple, containing:
+  # Each item is a tuple, containing some or all of:
   # - machine keyword (including trailing whitespace+comments)
   # - machine name
   # - login keyword (including surrounding whitespace+comments)
@@ -105,10 +105,14 @@ class Netrc
     while ts.length > 0
       cur << ts.take + ts.readto{|t| ! skip?(t)}
       cur << ts.take
-      cur << ts.readto{|t| t == "login"} + ts.take + ts.readto{|t| ! skip?(t)}
-      cur << ts.take
-      cur << ts.readto{|t| t == "password"} + ts.take + ts.readto{|t| ! skip?(t)}
-      cur << ts.take
+      if ts.include?('login')
+        cur << ts.readto{|t| t == "login"} + ts.take + ts.readto{|t| ! skip?(t)}
+        cur << ts.take
+      end
+      if ts.include?('password')
+        cur << ts.readto{|t| t == "password"} + ts.take + ts.readto{|t| ! skip?(t)}
+        cur << ts.take
+      end
       cur << ts.readto{|t| t == "machine"}
       item << cur
       cur = []

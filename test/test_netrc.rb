@@ -31,6 +31,28 @@ class TestNetrc < Test::Unit::TestCase
     assert_equal(exp, items)
   end
 
+  def test_login_file
+    pre, items = Netrc.parse(Netrc.lex(IO.readlines("data/login.netrc")))
+    assert_equal("# this is my login netrc\n", pre)
+    exp = [["machine ",
+            "m",
+            "\n  login ",
+            "l",
+            " # this is my username\n"]]
+    assert_equal(exp, items)
+  end
+
+  def test_password_file
+    pre, items = Netrc.parse(Netrc.lex(IO.readlines("data/password.netrc")))
+    assert_equal("# this is my password netrc\n", pre)
+    exp = [["machine ",
+            "m",
+            "\n  password ",
+            "p",
+            " # this is my password\n"]]
+    assert_equal(exp, items)
+  end
+
   def test_missing_file
     n = Netrc.read("data/nonexistent.netrc")
     assert_equal(0, n.length)
