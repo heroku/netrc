@@ -181,7 +181,14 @@ class Netrc
   end
 
   def unparse
-    @pre + @data.map(&:join).join
+    @pre + @data.map do |datum|
+      datum = datum.join
+      unless datum[-1..-1] == "\n"
+        datum << "\n"
+      else
+        datum
+      end
+    end.join
   end
 
 end

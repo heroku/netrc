@@ -114,6 +114,21 @@ class TestNetrc < Test::Unit::TestCase
     assert_equal(exp, n.unparse)
   end
 
+  def test_add_newlineless
+    n = Netrc.read("data/newlineless.netrc")
+    n.new_item_prefix = "# added\n"
+    n["x"] = "a", "b"
+    exp = "# this is my netrc\n"+
+          "machine m\n"+
+          "  login l # this is my username\n"+
+          "  password p\n"+
+          "# added\n"+
+          "machine x\n"+
+          "  login a\n"+
+          "  password b\n"
+    assert_equal(exp, n.unparse)
+  end
+
   def test_add_get
     n = Netrc.read("data/sample.netrc")
     n.new_item_prefix = "# added\n"
