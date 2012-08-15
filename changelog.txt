@@ -1,3 +1,15 @@
+0.7.7 08/15/12
+==============
+
+add newline between entries if one is missing
+
+0.7.6 08/15/12
+==============
+
+more unified newline handling
+make entries with login/password parsable
+
+
 0.7.5 06/25/12
 ==============
 
