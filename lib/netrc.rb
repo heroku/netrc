@@ -26,13 +26,17 @@ class Netrc
   # exist, returns an empty object. Decrypt paths ending in .gpg.
   def self.read(path=default_path)
     check_permissions(path)
-    if path =~ /\.gpg$/
+    data = if path =~ /\.gpg$/
       decrypted = `gpg --batch --quiet --decrypt #{path}`
-      raise Error.new("Decrypting #{path} failed.") unless $?.success?
-      new(path, parse(lex(decrypted.split("\n"))))
+      if $?.success?
+        decrypted
+      else
+        raise Error.new("Decrypting #{path} failed.") unless $?.success?
+      end
     else
-      new(path, parse(lex(File.readlines(path))))
+      File.read(path)
     end
+    new(path, parse(lex(data.lines.to_a)))
   rescue Errno::ENOENT
     new(path, parse(lex([])))
   end
