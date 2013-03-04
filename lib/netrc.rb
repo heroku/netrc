@@ -131,7 +131,7 @@ class Netrc
 
   def [](k)
     if item = @data.detect {|datum| datum[1] == k}
-      [item[3], item[5]]
+      Entry.new(item[3], item[5])
     end
   end
 
@@ -189,6 +189,10 @@ class Netrc
         datum
       end
     end.join
+  end
+
+  Entry = Struct.new(:login, :password) do
+    alias to_ary to_a
   end
 
 end
