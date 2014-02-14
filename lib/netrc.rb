@@ -1,4 +1,5 @@
 require 'rbconfig'
+require 'io/console'
 
 class Netrc
   VERSION = "0.7.7"
@@ -27,7 +28,10 @@ class Netrc
   def self.read(path=default_path)
     check_permissions(path)
     data = if path =~ /\.gpg$/
-      decrypted = `gpg --batch --quiet --decrypt #{path}`
+      print "Enter passphrase for #{path}: "
+      decrypted = STDIN.noecho do
+        `gpg --batch --passphrase-fd 0 --quiet --decrypt #{path}`
+      end
       if $?.success?
         decrypted
       else
