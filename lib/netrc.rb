@@ -28,9 +28,13 @@ class Netrc
   def self.read(path=default_path)
     check_permissions(path)
     data = if path =~ /\.gpg$/
-      print "Enter passphrase for #{path}: "
-      decrypted = STDIN.noecho do
-        `gpg --batch --passphrase-fd 0 --quiet --decrypt #{path}`
+      decrypted = if ENV['GPG_AGENT_INFO']
+        `gpg --batch --quiet --decrypt #{path}`
+      else
+         print "Enter passphrase for #{path}: "
+         STDIN.noecho do
+           `gpg --batch --passphrase-fd 0 --quiet --decrypt #{path}`
+         end
       end
       if $?.success?
         decrypted
