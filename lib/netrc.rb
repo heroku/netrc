@@ -101,19 +101,29 @@ class Netrc
       return l.join
     end
 
-    pre = ts.readto{|t| t == "machine"}
+    pre = ts.readto{|t| t == "machine" || t == "default"}
+
     while ts.length > 0
-      cur << ts.take + ts.readto{|t| ! skip?(t)}
-      cur << ts.take
+      if ts[0] == 'default'
+        cur << ts.take.to_sym
+        cur << ''
+      else
+        cur << ts.take + ts.readto{|t| ! skip?(t)}
+        cur << ts.take
+      end
+
       if ts.include?('login')
         cur << ts.readto{|t| t == "login"} + ts.take + ts.readto{|t| ! skip?(t)}
         cur << ts.take
       end
+
       if ts.include?('password')
         cur << ts.readto{|t| t == "password"} + ts.take + ts.readto{|t| ! skip?(t)}
         cur << ts.take
       end
-      cur << ts.readto{|t| t == "machine"}
+
+      cur << ts.readto{|t| t == "machine" || t == "default"}
+
       item << cur
       cur = []
     end
@@ -125,6 +135,12 @@ class Netrc
     @new_item_prefix = ''
     @path = path
     @pre, @data = data
+
+    if @data && @data.last && :default == @data.last[0]
+      @default = @data.pop
+    else
+      @default = nil
+    end
   end
 
   attr_accessor :new_item_prefix
@@ -132,6 +148,8 @@ class Netrc
   def [](k)
     if item = @data.detect {|datum| datum[1] == k}
       Entry.new(item[3], item[5])
+    elsif @default
+      Entry.new(@default[3], @default[5])
     end
   end
 

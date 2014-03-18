@@ -8,7 +8,7 @@ require "rbconfig"
 class TestNetrc < Test::Unit::TestCase
 
   def setup
-    File.chmod(0600, "data/sample.netrc")
+    Dir.glob('data/*.netrc').each{|f| File.chmod(0600, f)}
     File.chmod(0644, "data/permissive.netrc")
   end
 
@@ -209,4 +209,29 @@ class TestNetrc < Test::Unit::TestCase
     assert_equal("pass", pass)
   end
 
+  def test_with_default
+    netrc = Netrc.read('data/sample_with_default.netrc')
+    assert_equal(['l', 'p'], netrc['m'].to_a)
+    assert_equal(['default_login', 'default_password'], netrc['unknown'].to_a)
+  end
+
+  def test_multi_without_default
+    netrc = Netrc.read('data/sample_multi.netrc')
+    assert_equal(['lm', 'pm'], netrc['m'].to_a)
+    assert_equal(['ln', 'pn'], netrc['n'].to_a)
+    assert_equal([], netrc['other'].to_a)
+  end
+
+  def test_multi_with_default
+    netrc = Netrc.read('data/sample_multi_with_default.netrc')
+    assert_equal(['lm', 'pm'], netrc['m'].to_a)
+    assert_equal(['ln', 'pn'], netrc['n'].to_a)
+    assert_equal(['ld', 'pd'], netrc['other'].to_a)
+  end
+
+  def test_default_only
+    netrc = Netrc.read('data/default_only.netrc')
+    assert_equal(['ld', 'pd'], netrc['m'].to_a)
+    assert_equal(['ld', 'pd'], netrc['other'].to_a)
+  end
 end
