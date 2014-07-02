@@ -15,9 +15,18 @@ class Netrc
     end
   end
 
+  def self.config
+    @config ||= {}
+  end
+
+  def self.configure
+    yield(self.config) if block_given?
+    self.config
+  end
+
   def self.check_permissions(path)
     perm = File.stat(path).mode & 0777
-    if perm != 0600 && !(WINDOWS)
+    if perm != 0600 && !(WINDOWS) && !(Netrc.config[:allow_permissive_netrc_file])
       raise Error, "Permission bits for '#{path}' should be 0600, but are "+perm.to_s(8)
     end
   end
