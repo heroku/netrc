@@ -18,6 +18,12 @@ Read the user's default netrc file (`$HOME/.netrc` on Unix;
 
     n = Netrc.read
 
+Configure netrc to allow permissive files (with permissions other than 0600):
+
+    Netrc.configure do |config|
+      config[:allow_permissive_netrc_file] = true
+    end
+
 Look up a username and password:
 
     user, pass = n["example.com"]

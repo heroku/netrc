@@ -62,10 +62,28 @@ class TestNetrc < Test::Unit::TestCase
     original_windows = Netrc::WINDOWS
     Netrc.const_set(:WINDOWS, false)
     Netrc.read("data/permissive.netrc")
+    assert false, "Should raise an error if permissions are wrong on a non-windows system."
   rescue Netrc::Error
-    assert true, "Should raise an error if permissions are wrong on a non-windows system."
+    assert true, ""
   ensure
     Netrc.const_set(:WINDOWS, original_windows)
+  end
+
+  def test_allow_permissive_netrc_file_option
+    Netrc.configure do |config|
+      config[:allow_permissive_netrc_file] = true
+    end
+    original_windows = Netrc::WINDOWS
+    Netrc.const_set(:WINDOWS, false)
+    Netrc.read("data/permissive.netrc")
+    assert true, ""
+  rescue Netrc::Error
+    assert false, "Should not raise an error if allow_permissive_netrc_file option is set to true"
+  ensure
+    Netrc.const_set(:WINDOWS, original_windows)
+    Netrc.configure do |config|
+      config[:allow_permissive_netrc_file] = false
+    end
   end
 
   def test_permission_error_windows
