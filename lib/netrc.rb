@@ -200,7 +200,7 @@ class Netrc
         gpg.close_write
         gpg.read
       end
-      raise Error.new("Encrypting #{path} failed.") unless $?.success?
+      raise Error.new("Encrypting #{@path} failed.") unless $?.success?
       File.open(@path, 'w', 0600) {|file| file.print(e)}
     else
       File.open(@path, 'w', 0600) {|file| file.print(unparse)}
