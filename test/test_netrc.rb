@@ -120,7 +120,7 @@ class TestNetrc < Test::Unit::TestCase
   def test_set_get
     n = Netrc.read("data/sample.netrc")
     n["m"] = "a", "b"
-    assert_equal(["a", "b"], n["m"])
+    assert_equal(["a", "b"], n["m"].to_a)
   end
 
   def test_add
@@ -157,7 +157,7 @@ class TestNetrc < Test::Unit::TestCase
     n = Netrc.read("data/sample.netrc")
     n.new_item_prefix = "# added\n"
     n["x"] = "a", "b"
-    assert_equal(["a", "b"], n["x"])
+    assert_equal(["a", "b"], n["x"].to_a)
   end
 
   def test_get_missing
@@ -200,6 +200,38 @@ class TestNetrc < Test::Unit::TestCase
     ENV["HOME"], nil_home = nil_home, ENV["HOME"]
   end
 
+  def test_read_entry
+    entry = Netrc.read("data/sample.netrc")['m']
+    assert_equal 'l', entry.login
+    assert_equal 'p', entry.password
+
+    # hash-style
+    assert_equal 'l', entry[:login]
+    assert_equal 'p', entry[:password]
+  end
+
+  def test_write_entry
+    n = Netrc.read("data/sample.netrc")
+    entry = n['m']
+    entry.login    = 'new_login'
+    entry.password = 'new_password'
+    n['m'] = entry
+    assert_equal(['new_login', 'new_password'], n['m'].to_a)
+  end
+
+  def test_entry_splat
+    e = Netrc::Entry.new("user", "pass")
+    user, pass = *e
+    assert_equal("user", user)
+    assert_equal("pass", pass)
+  end
+
+  def test_entry_implicit_splat
+    e = Netrc::Entry.new("user", "pass")
+    user, pass = e
+    assert_equal("user", user)
+    assert_equal("pass", pass)
+  end
 
   def test_with_default
     netrc = Netrc.read('data/sample_with_default.netrc')
