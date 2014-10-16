@@ -1,4 +1,9 @@
-0.7.9 10/15/14
+0.8.0 10/16/14
+==============
+
+re-revert entry changes with minor bump
+
+0.7.9 10/16/14
 ==============
 
 revert entry changes for a backwards-compatible version
