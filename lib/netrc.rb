@@ -13,7 +13,7 @@ class Netrc
     else
       # In some cases, people run master process as "root" user, and run worker processes as "www" user.
       # Fix "Permission denied" error in worker processes when $HOME is "/root".
-      default_dir = (ENV['HOME'] && File.exists?(ENV['HOME']) && File.stat(ENV['HOME']).readable?) ? ENV['HOME'] : './'
+      default_dir = (ENV['HOME'] && File.exist?(ENV['HOME']) && File.stat(ENV['HOME']).readable?) ? ENV['HOME'] : './'
       File.join(default_dir, ".netrc")
     end
   end
