@@ -13,8 +13,8 @@ If the file doesn't exist, Netrc.read will return an empty object. If
 the filename ends in ".gpg", it will be decrypted using
 [GPG](http://www.gnupg.org/).
 
-Read the user's default netrc file (`$HOME/.netrc` on Unix;
-`%HOME%\_netrc` on Windows):
+Read the user's default netrc file. On Unix: `$HOME/.netrc`.
+On Windows: `%HOME%\_netrc`, `%HOMEDRIVE%%HOMEPATH%\_netrc`, or `%USERPROFILE%\_netrc` (whichever is set first).
 
     n = Netrc.read
 
