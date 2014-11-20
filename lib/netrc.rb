@@ -9,7 +9,10 @@ class Netrc
 
   def self.default_path
     if WINDOWS && !CYGWIN
-      File.join(ENV['USERPROFILE'].gsub("\\","/"), "_netrc")
+      home = ENV['HOME']
+      home ||= ENV['HOMEDRIVE'] + ENV['HOMEPATH'] if ENV['HOMEDRIVE'] && ENV['HOMEPATH']
+      home ||= ENV['USERPROFILE']
+      File.join(home.gsub("\\","/"), "_netrc")
     else
       # In some cases, people run master process as "root" user, and run worker processes as "www" user.
       # Fix "Permission denied" error in worker processes when $HOME is "/root".
