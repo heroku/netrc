@@ -1,3 +1,8 @@
+0.9.0 12/01/14
+==============
+
+use HOME or HOMEPATH/HOMEDRIVE to find home on windows
+
 0.8.0 10/16/14
 ==============
 
