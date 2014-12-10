@@ -8,17 +8,25 @@ class Netrc
   CYGWIN  = RbConfig::CONFIG["host_os"] =~ /cygwin/
 
   def self.default_path
+    File.join(home_path, netrc_filename)
+  end
+
+  def self.home_path
+    return Dir.home if defined? Dir.home # Ruby 1.9+
     if WINDOWS && !CYGWIN
       home = ENV['HOME']
       home ||= ENV['HOMEDRIVE'] + ENV['HOMEPATH'] if ENV['HOMEDRIVE'] && ENV['HOMEPATH']
       home ||= ENV['USERPROFILE']
-      File.join(home.gsub("\\","/"), "_netrc")
+      home.gsub("\\","/")
     else
       # In some cases, people run master process as "root" user, and run worker processes as "www" user.
       # Fix "Permission denied" error in worker processes when $HOME is "/root".
-      default_dir = (ENV['HOME'] && File.exist?(ENV['HOME']) && File.stat(ENV['HOME']).readable?) ? ENV['HOME'] : './'
-      File.join(default_dir, ".netrc")
+      (ENV['HOME'] && File.exist?(ENV['HOME']) && File.stat(ENV['HOME']).readable?) ? ENV['HOME'] : './'
     end
+  end
+
+  def self.netrc_filename
+    WINDOWS && !CYGWIN ? "_netrc" : ".netrc"
   end
 
   def self.config
