@@ -187,7 +187,9 @@ class TestNetrc < Test::Unit::TestCase
       n["m"] = "a", "b"
       n.save
       assert_equal(0600, File.stat("/tmp/test.netrc.gpg").mode & 0777)
-      assert_equal(["a", "b"], Netrc.read("/tmp/test.netrc.gpg")["m"])
+      netrc = Netrc.read("/tmp/test.netrc.gpg")["m"]
+      assert_equal("a", netrc.login)
+      assert_equal("b", netrc.password)
     end
   end
 
