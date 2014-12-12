@@ -1,4 +1,5 @@
 require 'rbconfig'
+require 'etc'
 
 class Netrc
   VERSION = "0.10.0"
@@ -12,7 +13,7 @@ class Netrc
   end
 
   def self.home_path
-    return Dir.home if defined? Dir.home # Ruby 1.9+
+    return Dir.home(Etc.getlogin)
     if WINDOWS && !CYGWIN
       home = ENV['HOME']
       home ||= ENV['HOMEDRIVE'] + ENV['HOMEPATH'] if ENV['HOMEDRIVE'] && ENV['HOMEPATH']
