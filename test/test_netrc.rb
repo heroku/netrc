@@ -196,9 +196,7 @@ class TestNetrc < Test::Unit::TestCase
   def test_missing_environment
     nil_home = nil
     ENV["HOME"], nil_home = nil_home, ENV["HOME"]
-    assert_raise_with_message ArgumentError, "couldn't find HOME environment -- expanding `~'" do
-      Netrc.read
-    end
+    assert_equal File.join(Dir.pwd, '.netrc'), Netrc.default_path
   ensure
     ENV["HOME"], nil_home = nil_home, ENV["HOME"]
   end

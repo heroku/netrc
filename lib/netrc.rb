@@ -23,6 +23,8 @@ class Netrc
       # Fix "Permission denied" error in worker processes when $HOME is "/root".
       (ENV['HOME'] && File.exist?(ENV['HOME']) && File.stat(ENV['HOME']).readable?) ? ENV['HOME'] : './'
     end
+  rescue ArgumentError
+    return Dir.pwd
   end
 
   def self.netrc_filename
