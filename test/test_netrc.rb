@@ -12,6 +12,10 @@ class TestNetrc < Test::Unit::TestCase
     File.chmod(0644, "data/permissive.netrc")
   end
 
+  def teardown
+    Dir.glob('data/*.netrc').each{|f| File.chmod(0644, f)}
+  end
+
   def test_parse_empty
     pre, items = Netrc.parse(Netrc.lex([]))
     assert_equal("", pre)
