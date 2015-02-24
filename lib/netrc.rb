@@ -12,17 +12,16 @@ class Netrc
   end
 
   def self.home_path
-    return Dir.home if defined? Dir.home # Ruby 1.9+
+    home = Dir.respond_to?(:home) ? Dir.home : ENV['HOME']
+
     if WINDOWS && !CYGWIN
-      home = ENV['HOME']
-      home ||= ENV['HOMEDRIVE'] + ENV['HOMEPATH'] if ENV['HOMEDRIVE'] && ENV['HOMEPATH']
+      home ||= File.join(ENV['HOMEDRIVE'], ENV['HOMEPATH']) if ENV['HOMEDRIVE'] && ENV['HOMEPATH']
       home ||= ENV['USERPROFILE']
-      home.gsub("\\","/")
-    else
-      # In some cases, people run master process as "root" user, and run worker processes as "www" user.
-      # Fix "Permission denied" error in worker processes when $HOME is "/root".
-      (ENV['HOME'] && File.exist?(ENV['HOME']) && File.stat(ENV['HOME']).readable?) ? ENV['HOME'] : './'
+      # XXX: old stuff; most likely unnecessary
+      home = home.gsub("\\", "/") unless home.nil?
     end
+
+    (home && File.readable?(home)) ? home : Dir.pwd
   rescue ArgumentError
     return Dir.pwd
   end
