@@ -47,4 +47,4 @@ Have fun!
 ## Running Tests
 
     $ bundle install
-    $ bundle exec turn test
+    $ bundle ruby -e 'Dir.glob "./test/**/test_*.rb", &method(:require)'
