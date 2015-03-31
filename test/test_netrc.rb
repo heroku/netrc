@@ -1,11 +1,11 @@
 $VERBOSE = true
-require 'test/unit'
+require 'minitest/autorun'
 require 'fileutils'
 
 require File.expand_path("#{File.dirname(__FILE__)}/../lib/netrc")
 require "rbconfig"
 
-class TestNetrc < Test::Unit::TestCase
+class TestNetrc < Minitest::Test
 
   def setup
     Dir.glob('data/*.netrc').each{|f| File.chmod(0600, f)}

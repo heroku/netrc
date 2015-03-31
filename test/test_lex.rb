@@ -1,9 +1,9 @@
 $VERBOSE = true
-require 'test/unit'
+require 'minitest/autorun'
 
 require File.expand_path("#{File.dirname(__FILE__)}/../lib/netrc")
 
-class TestLex < Test::Unit::TestCase
+class TestLex < Minitest::Test
   def test_lex_empty
     t = Netrc.lex([])
     assert_equal([], t)
