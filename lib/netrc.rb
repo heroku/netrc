@@ -65,8 +65,25 @@ class Netrc
     new(path, parse(lex([])))
   end
 
+  class TokenArray < Array
+    def take
+      if length < 1
+        raise Error, "unexpected EOF"
+      end
+      shift
+    end
+
+    def readto
+      l = []
+      while length > 0 && ! yield(self[0])
+        l << shift
+      end
+      return l.join
+    end
+  end
+
   def self.lex(lines)
-    tokens = []
+    tokens = TokenArray.new
     for line in lines
       content, comment = line.split(/(\s*#.*)/m)
       content.each_char do |char|
@@ -96,6 +113,8 @@ class Netrc
     s =~ /^\s/
   end
 
+
+
   # Returns two values, a header and a list of items.
   # Each item is a tuple, containing some or all of:
   # - machine keyword (including trailing whitespace+comments)
@@ -110,19 +129,8 @@ class Netrc
   def self.parse(ts)
     cur, item = [], []
 
-    def ts.take
-      if length < 1
-        raise Error, "unexpected EOF"
-      end
-      shift
-    end
-
-    def ts.readto
-      l = []
-      while length > 0 && ! yield(self[0])
-        l << shift
-      end
-      return l.join
+    unless ts.is_a?(TokenArray)
+      ts = TokenArray.new(ts)
     end
 
     pre = ts.readto{|t| t == "machine" || t == "default"}
