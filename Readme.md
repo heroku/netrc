@@ -1,7 +1,7 @@
 # Netrc
 
 This library reads and writes
-[`.netrc` files](http://www.gnu.org/software/inetutils/manual/html_node/The-_002enetrc-File.html).
+[`.netrc` files](http://www.gnu.org/software/inetutils/manual/html_node/The-_002enetrc-file.html).
 
 ## API
 
