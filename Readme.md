@@ -13,8 +13,11 @@ If the file doesn't exist, Netrc.read will return an empty object. If
 the filename ends in ".gpg", it will be decrypted using
 [GPG](http://www.gnupg.org/).
 
-Read the user's default netrc file. On Unix: `$HOME/.netrc`.
-On Windows: `%HOME%\_netrc`, `%HOMEDRIVE%%HOMEPATH%\_netrc`, or `%USERPROFILE%\_netrc` (whichever is set first).
+Read the user's default netrc file.
+
+**On Unix:** `$NETRC/.netrc` or `$HOME/.netrc` (whichever is set first).
+
+**On Windows:** `%NETRC%\_netrc`, `%HOME%\_netrc`, `%HOMEDRIVE%%HOMEPATH%\_netrc`, or `%USERPROFILE%\_netrc` (whichever is set first).
 
     n = Netrc.read
 
@@ -47,4 +50,4 @@ Have fun!
 ## Running Tests
 
     $ bundle install
-    $ bundle ruby -e 'Dir.glob "./test/**/test_*.rb", &method(:require)'
+    $ bundle exec ruby -e 'Dir.glob "./test/**/test_*.rb", &method(:require)'
