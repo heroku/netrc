@@ -205,6 +205,13 @@ class TestNetrc < Minitest::Test
     ENV["HOME"], nil_home = nil_home, ENV["HOME"]
   end
 
+  def test_netrc_environment_variable
+    ENV["NETRC"] = File.join(Dir.pwd, 'data')
+    assert_equal File.join(Dir.pwd, 'data', '.netrc'), Netrc.default_path
+  ensure
+    ENV.delete("NETRC")
+  end
+
   def test_read_entry
     entry = Netrc.read("data/sample.netrc")['m']
     assert_equal 'l', entry.login

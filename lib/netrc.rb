@@ -8,7 +8,7 @@ class Netrc
   CYGWIN  = RbConfig::CONFIG["host_os"] =~ /cygwin/
 
   def self.default_path
-    File.join(home_path, netrc_filename)
+    File.join(ENV['NETRC'] || home_path, netrc_filename)
   end
 
   def self.home_path
@@ -18,7 +18,7 @@ class Netrc
       home ||= File.join(ENV['HOMEDRIVE'], ENV['HOMEPATH']) if ENV['HOMEDRIVE'] && ENV['HOMEPATH']
       home ||= ENV['USERPROFILE']
       # XXX: old stuff; most likely unnecessary
-      home = home.gsub("\\", "/") unless home.nil?
+      home = home.tr("\\", "/") unless home.nil?
     end
 
     (home && File.readable?(home)) ? home : Dir.pwd
