@@ -42,8 +42,9 @@ class Netrc
 
   def self.check_permissions(path)
     perm = File.stat(path).mode & 0777
-    if perm != 0600 && !(WINDOWS) && !(Netrc.config[:allow_permissive_netrc_file])
-      raise Error, "Permission bits for '#{path}' should be 0600, but are "+perm.to_s(8)
+    check_bits = perm & 0077
+    if check_bits != 0 && !(WINDOWS) && !(Netrc.config[:allow_permissive_netrc_file])
+      raise Error, "Permission bits for '#{path}' should be private, but are "+perm.to_s(8)
     end
   end
 
