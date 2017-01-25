@@ -66,7 +66,9 @@ class Netrc
         raise Error.new("Decrypting #{path} failed.") unless $?.success?
       end
     else
-      File.read(path)
+      raise Errornew("'#{path}' does not exist") unless File.readable?(path)
+
+      File.read(path) 
     end
     new(path, parse(lex(data.lines.to_a)))
   rescue Errno::ENOENT
