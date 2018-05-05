@@ -152,16 +152,23 @@ class Netrc
         cur << ts.take
       end
 
-      if ts.include?('login')
-        cur << ts.readto{|t| t == "login"} + ts.take + ts.readto{|t| ! skip?(t)}
-        cur << ts.take
+      login = [nil, nil]
+      password = [nil, nil]
+
+      2.times do
+        t1 = ts.readto{|t| t == "login" || t == "password" || t == "machine" || t == "default"}
+
+        if ts[0] == "login"
+          login = [t1 + ts.take + ts.readto{|t| ! skip?(t)}, ts.take]
+        elsif ts[0] == "password"
+          password = [t1 + ts.take + ts.readto{|t| ! skip?(t)}, ts.take]
+        else
+          ts.unshift(t1)
+        end
       end
 
-      if ts.include?('password')
-        cur << ts.readto{|t| t == "password"} + ts.take + ts.readto{|t| ! skip?(t)}
-        cur << ts.take
-      end
-
+      cur += login
+      cur += password
       cur << ts.readto{|t| t == "machine" || t == "default"}
 
       item << cur

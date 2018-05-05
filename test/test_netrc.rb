@@ -42,6 +42,8 @@ class TestNetrc < Minitest::Test
             "m",
             "\n  login ",
             "l",
+            nil,
+            nil,
             " # this is my username\n"]]
     assert_equal(exp, items)
   end
@@ -51,6 +53,8 @@ class TestNetrc < Minitest::Test
     assert_equal("# this is my password netrc\n", pre)
     exp = [["machine ",
             "m",
+            nil,
+            nil,
             "\n  password ",
             "p",
             " # this is my password\n"]]
@@ -222,6 +226,26 @@ class TestNetrc < Minitest::Test
     assert_equal 'p', entry[:password]
   end
 
+  def test_read_entry_without_login
+    entry = Netrc.read("data/password.netrc")['m']
+    assert_nil entry.login
+    assert_equal 'p', entry.password
+
+    # hash-style
+    assert_nil entry[:login]
+    assert_equal 'p', entry[:password]
+  end
+
+  def test_read_entry_without_password
+    entry = Netrc.read("data/login.netrc")['m']
+    assert_equal 'l', entry.login
+    assert_nil entry.password
+
+    # hash-style
+    assert_equal 'l', entry[:login]
+    assert_nil entry[:password]
+  end
+
   def test_write_entry
     n = Netrc.read("data/sample.netrc")
     entry = n['m']
@@ -269,5 +293,12 @@ class TestNetrc < Minitest::Test
     netrc = Netrc.read('data/default_only.netrc')
     assert_equal(['ld', 'pd'], netrc['m'].to_a)
     assert_equal(['ld', 'pd'], netrc['other'].to_a)
+  end
+
+  def test_multi_without_logins
+    netrc = Netrc.read('data/sample_multi_without_logins.netrc')
+    assert_equal([nil, 'pm'], netrc['m'].to_a)
+    assert_equal([nil, 'pn'], netrc['n'].to_a)
+    assert_equal(['lo', 'po'], netrc['o'].to_a)
   end
 end
