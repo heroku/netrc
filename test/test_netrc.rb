@@ -166,7 +166,7 @@ class TestNetrc < Minitest::Test
 
   def test_get_missing
     n = Netrc.read("data/sample.netrc")
-    assert_equal(nil, n["x"])
+    assert_nil(n["x"])
   end
 
   def test_save
