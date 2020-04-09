@@ -200,7 +200,15 @@ class TestNetrc < Minitest::Test
   def test_missing_environment
     nil_home = nil
     ENV["HOME"], nil_home = nil_home, ENV["HOME"]
-    assert_equal File.join(Dir.pwd, '.netrc'), Netrc.default_path
+
+    # If user's home directory can be obtained via getpwnam(3) AND is
+    # readable, then the $HOME environment variable is not considered for
+    # building the Netrc default_path, and no fallback directory is
+    # referenced.
+    dflt_dir = Dir.respond_to?(:home) && File.readable?(Dir.home) \
+             ? Dir.home : Dir.pwd
+
+    assert_equal File.join(dflt_dir, '.netrc'), Netrc.default_path
   ensure
     ENV["HOME"], nil_home = nil_home, ENV["HOME"]
   end
