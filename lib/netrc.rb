@@ -42,8 +42,16 @@ class Netrc
 
   def self.check_permissions(path)
     perm = File.stat(path).mode & 0777
-    if perm != 0600 && !(WINDOWS) && !(Netrc.config[:allow_permissive_netrc_file])
-      raise Error, "Permission bits for '#{path}' should be 0600, but are "+perm.to_s(8)
+
+    # Regardless of whether or not the caller has requested that permissive
+    # perms be allowed on the netrc file, we baulk if the perms are too
+    # restrictive; we need to be able to read the file.
+    unless File.stat(path).readable?
+      raise Error, "File '#{path}' is not readable; perms are "+perm.to_s(8)
+    end
+
+    if perm != 0400 && perm != 0600 && !(WINDOWS) && !(Netrc.config[:allow_permissive_netrc_file])
+      raise Error, "Permission bits for '#{path}' should be 0600 (or 0400), but are "+perm.to_s(8)
     end
   end
 

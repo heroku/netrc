@@ -10,6 +10,10 @@ class TestNetrc < Minitest::Test
   def setup
     Dir.glob('data/*.netrc').each{|f| File.chmod(0600, f)}
     File.chmod(0644, "data/permissive.netrc")
+
+    File.chmod(0000, "data/restrictive0000.netrc")
+    File.chmod(0400, "data/restrictive0400.netrc")
+    File.chmod(0600, "data/restrictive0600.netrc")
   end
 
   def teardown
@@ -101,6 +105,46 @@ class TestNetrc < Minitest::Test
     Netrc.read("data/permissive.netrc")
   rescue Netrc::Error
     assert false, "Should not raise an error if permissions are wrong on a non-windows system."
+  ensure
+    Netrc.send(:remove_const, :WINDOWS)
+    Netrc.const_set(:WINDOWS, original_windows)
+  end
+
+  def test_error_restrictive0000_netrc_file_perms
+    original_windows = Netrc::WINDOWS
+    Netrc.send(:remove_const, :WINDOWS)
+    Netrc.const_set(:WINDOWS, false)
+    Netrc.read("data/restrictive0000.netrc")
+    assert false, "Should raise an error if permissions do not include S_IRUSR (00400) u+r (readable by owner) on a non-windows system."
+  rescue Netrc::Error => ex
+    assert_match /is not readable/, ex.message, "Exception should indicate \"is not readable\" (got: #{ex.message})"
+    assert true, ""
+  ensure
+    Netrc.send(:remove_const, :WINDOWS)
+    Netrc.const_set(:WINDOWS, original_windows)
+  end
+
+  def test_allow_restrictive0400_netrc_file_perms
+    original_windows = Netrc::WINDOWS
+    Netrc.send(:remove_const, :WINDOWS)
+    Netrc.const_set(:WINDOWS, false)
+    Netrc.read("data/restrictive0400.netrc")
+    assert true, ""
+  rescue Netrc::Error => ex
+    assert false, "Should not raise an error if restrictive file perms are set to 0400 (msg: #{ex.message})"
+  ensure
+    Netrc.send(:remove_const, :WINDOWS)
+    Netrc.const_set(:WINDOWS, original_windows)
+  end
+
+  def test_allow_restrictive0600_netrc_file_perms
+    original_windows = Netrc::WINDOWS
+    Netrc.send(:remove_const, :WINDOWS)
+    Netrc.const_set(:WINDOWS, false)
+    Netrc.read("data/restrictive0600.netrc")
+    assert true, ""
+  rescue Netrc::Error => ex
+    assert false, "Should not raise an error if restrictive file perms are set to 0600 (msg: #{ex.message})"
   ensure
     Netrc.send(:remove_const, :WINDOWS)
     Netrc.const_set(:WINDOWS, original_windows)
