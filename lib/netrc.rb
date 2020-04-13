@@ -24,6 +24,32 @@ class Netrc
 
     (home && File.readable?(home)) ? home : Dir.pwd
   rescue ArgumentError
+
+    unless WINDOWS
+      # Ruby 2.5.x through 2.7.1 (and probably other versions) raises an
+      # ArgumentError when the 'HOME' env var is not set and the process is
+      # not a subprocess of a login session. That is, it tries to navigate
+      # into the password database using the username obtained from
+      # getlogin(), whichs will return NULL in such a circumstance. It would
+      # be better if it instead tried to do it via the UID obtained from
+      # getuid(), which always succeeds. Nevertheless, we'll work around the
+      # problem by doing that ourselves here.
+      begin
+        require 'etc'
+      rescue LoadError
+        warn "HOME is not set, and the 'etc' module not available; using pwd as home\n"
+        return Dir.pwd
+      end
+
+      passwd_record = Etc.getpwuid(Process.uid);
+      unless passwd_record
+        warn "Record for uid #{Process.uid} not found in the password database; using pwd as home\n"
+        return Dir.pwd
+      end
+
+      return passwd_record.dir
+    end
+
     return Dir.pwd
   end
 
