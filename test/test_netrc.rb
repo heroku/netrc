@@ -121,7 +121,7 @@ class TestNetrc < Minitest::Test
     Netrc.read("data/restrictive0000.netrc")
     assert false, "Should raise an error if permissions do not include S_IRUSR (00400) u+r (readable by owner) on a non-windows system."
   rescue Netrc::Error => ex
-    assert_match /is not readable/, ex.message, "Exception should indicate \"is not readable\" (got: #{ex.message})"
+    assert_match(/is not readable/, ex.message, "Exception should indicate \"is not readable\" (got: #{ex.message})")
     assert true, ""
   ensure
     Netrc.send(:remove_const, :WINDOWS)
