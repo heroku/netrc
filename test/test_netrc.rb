@@ -20,6 +20,38 @@ class TestNetrc < Minitest::Test
     Dir.glob('data/*.netrc').each{|f| File.chmod(0644, f)}
   end
 
+  # Helper for obtaining a value for the user's home directory from the
+  # password database (querying it by uid), else falling back on using the
+  # pwd. This is analogous to what the Netrc.home_path method does on
+  # Unix-like systems when neither 'NETRC' nor 'HOME' are defined, if the
+  # process is not a child (or grandchild) of a login session, or if the
+  # user's actual home directory is not readable for some reason.
+  #
+  def fallback_homedir_else_pwd
+    begin
+      require 'etc'
+    rescue LoadError
+      # Without the 'Etc' module we are unable to query the password database
+      return Dir.pwd
+    end
+
+    # Note that Process.uid returns the value of getuid() which (on Linux) may
+    # be different from the value of /proc/self/loginuid (e.g., for a process
+    # that is not a (grand)child of a login process). That is important here
+    # because we should be able to obtain the record from the password
+    # database, even if Ruby's built-in 'Dir.home' cannot (because it uses
+    # getlogin() and fails in that scenario, at least through Ruby 2.7.1).
+    #
+    passwd_record = Etc.getpwuid(Process.uid)
+    unless passwd_record
+      return Dir.pwd  # Record for uid not available for some reason
+    end
+
+    return passwd_record.dir if File.readable?(passwd_record.dir)
+
+    return Dir.pwd
+  end
+
   def test_parse_empty
     pre, items = Netrc.parse(Netrc.lex([]))
     assert_equal("", pre)
@@ -245,20 +277,40 @@ class TestNetrc < Minitest::Test
     end
   end
 
+  # The precedence order for finding the user's netrc file is the first
+  # /readable/ name from the following list:
+  #
+  #     1. Use NETRC, if set
+  #     2. Use "$HOME/.netrc", if HOME is set
+  #     3. Use Dir.home, if possible (only works where getlogin() is non-NULL)
+  #     4. (MS Windows only) Combine HOMEDRIVE and HOMEPATH, if both are set
+  #     5. (MS Windows only) Use USERPROFILE, if set
+  #     6. (Non-MS Windows only) Use pw_dir field from password database, if available
+  #     7. Dir.pwd  (is not checked for readability)
+  #
+  # This test exercises the behavior when none of the above listed environment
+  # variables are present and/or set.
+  #
   def test_missing_environment
-    nil_home = nil
-    ENV["HOME"], nil_home = nil_home, ENV["HOME"]
 
-    # If user's home directory can be obtained via getpwnam(3) AND is
-    # readable, then the $HOME environment variable is not considered for
-    # building the Netrc default_path, and no fallback directory is
-    # referenced.
-    dflt_dir = Dir.respond_to?(:home) && File.readable?(Dir.home) \
-             ? Dir.home : Dir.pwd
+    envkeys = %w(NETRC HOME HOMEDRIVE HOMEPATH USERPROFILE)
+    envhold = {}
+
+    envkeys.each do |ekey|
+      if ENV.has_key?(ekey)
+        envhold[ekey] = ENV[ekey]
+        ENV.delete(ekey)
+      end
+    end
+
+    dflt_dir = self.fallback_homedir_else_pwd
 
     assert_equal File.join(dflt_dir, '.netrc'), Netrc.default_path
   ensure
-    ENV["HOME"], nil_home = nil_home, ENV["HOME"]
+    # ENV obj is not really a hash; use poor man's manual merge!(...)
+    envhold.each do |holdkey, holdval|
+      ENV[holdkey] = holdval
+    end
   end
 
   def test_netrc_environment_variable
