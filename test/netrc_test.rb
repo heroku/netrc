@@ -1,9 +1,4 @@
-$VERBOSE = true
-require 'minitest/autorun'
-require 'fileutils'
-
-require File.expand_path("#{File.dirname(__FILE__)}/../lib/netrc")
-require "rbconfig"
+require 'test_helper'
 
 class TestNetrc < Minitest::Test
 
