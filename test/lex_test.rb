@@ -1,7 +1,4 @@
-$VERBOSE = true
-require 'minitest/autorun'
-
-require File.expand_path("#{File.dirname(__FILE__)}/../lib/netrc")
+require 'test_helper'
 
 class TestLex < Minitest::Test
   def test_lex_empty

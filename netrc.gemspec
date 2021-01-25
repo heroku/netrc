@@ -14,5 +14,7 @@ Gem::Specification.new do |gem|
 
   gem.files = %x{ git ls-files }.split("\n").select { |d| d =~ %r{^(changelog.txt|LICENSE|Readme.md|data/|lib/|test/)} }
 
+  gem.add_development_dependency "bundler"
+  gem.add_development_dependency "rake"
   gem.add_development_dependency "minitest"
 end
