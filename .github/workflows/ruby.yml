@@ -17,7 +17,7 @@ jobs:
     continue-on-error: ${{ matrix.ruby-version == 'head' }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
