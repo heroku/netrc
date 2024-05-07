@@ -309,8 +309,17 @@ class TestNetrc < Minitest::Test
   end
 
   def test_netrc_environment_variable
-    ENV["NETRC"] = File.join(Dir.pwd, 'data')
-    assert_equal File.join(Dir.pwd, 'data', '.netrc'), Netrc.default_path
+    [
+      # Backward compatible behavior where `[\._]netrc` gets appended to the `NETRC` env var if it points to a directory
+      [File.join(Dir.pwd, 'data'), File.join(Dir.pwd, 'data', '.netrc')],
+      # Behavior identical to GNU inetutils where `NETRC` env var used as is.
+      # See https://github.com/guillemj/inetutils/blob/master/ftp/ruserpass.c#L120-L132 for more info
+      [File.join(Dir.pwd, 'data', '.netrc'), File.join(Dir.pwd, 'data', '.netrc')],
+      [File.join(Dir.pwd, 'data', '.xyz'), File.join(Dir.pwd, 'data', '.xyz')]
+    ].each do |env_var_value, expected_path|
+      ENV["NETRC"] = env_var_value
+      assert_equal expected_path, Netrc.default_path
+    end
   ensure
     ENV.delete("NETRC")
   end

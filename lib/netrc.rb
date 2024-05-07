@@ -9,7 +9,16 @@ class Netrc
   CYGWIN  = RbConfig::CONFIG["host_os"] =~ /cygwin/
 
   def self.default_path
-    File.join(ENV['NETRC'] || home_path, netrc_filename)
+    if not ENV['NETRC']
+      File.join(home_path, netrc_filename)
+    elsif File.directory?(ENV['NETRC'])
+      # Backward compatible behavior where `[\._]netrc` gets appended to the `NETRC` env var if it points to a directory
+      File.join(ENV['NETRC'], netrc_filename)
+    else
+      # Behavior identical to GNU inetutils where `NETRC` env var used as is.
+      # See https://github.com/guillemj/inetutils/blob/master/ftp/ruserpass.c#L120-L132 for more info
+      ENV['NETRC']
+    end
   end
 
   def self.home_path
